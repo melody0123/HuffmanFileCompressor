@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include "compression.h"
 
@@ -20,4 +21,5 @@ int main()
         else
             printf("非法的输入！\n");
     }
+    return 0;
 }

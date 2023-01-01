@@ -1,6 +1,6 @@
 #ifndef COMPRESSION_H_INCLUDED
 #define COMPRESSION_H_INCLUDED
-
+#define _CRT_SECURE_NO_WARNINGS
 #include "huff_tree.h"
 
 
@@ -178,23 +178,24 @@ void HuffCompression::decompress()
     HuffmanTree<unsigned char, unsigned long> *p_tree = new HuffmanTree<unsigned char, unsigned long>(ch, w, n); //建树
 
     char c = fgetc(infp);
-    string tmp;
     while(!feof(infp))
     {
+        string code_tmp;
         unsigned char uc = (unsigned char)c;
         for(int i = 0; i < 8; i++) //c 转换成二进制串
         {
-            if(uc < 128) tmp = tmp + "0";
-            else tmp = tmp + "1";
-            uc << 1;
+            if(uc < 128) code_tmp = code_tmp + "0";
+            else code_tmp = code_tmp + "1";
+            uc = uc << 1;
         }
-        c = fgetc(infp);
-    }
+        //译码
+        unsigned char res[20] = { '\0' }; //保存译码结果的缓冲区
+        int cur_pos = 0; //用于指示res的当前下标
+        p_tree->decode(code_tmp, res, &cur_pos); //译码
+        if(cur_pos)
+            fwrite(res, sizeof(unsigned char), cur_pos, outfp); //写入文件
 
-    LinkList<unsigned char> origin_file = p_tree->decode(tmp, size); //译码
-    for(node<unsigned char> *cur_ptr = (origin_file.get_head())->next; cur_ptr != nullptr; cur_ptr = cur_ptr->next)
-    {
-        fputc(cur_ptr->data, outfp);
+        c = fgetc(infp);
     }
 
     fclose(infp);
