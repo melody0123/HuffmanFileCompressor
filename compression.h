@@ -180,12 +180,12 @@ void HuffCompression::decompress()
     char c = fgetc(infp);
     while(!feof(infp))
     {
-        string code_tmp;
+        unsigned char code_tmp = 0;
         unsigned char uc = (unsigned char)c;
         for(int i = 0; i < 8; i++) //c 转换成二进制串
         {
-            if(uc < 128) code_tmp = code_tmp + "0";
-            else code_tmp = code_tmp + "1";
+            if(uc < 128) code_tmp = code_tmp << 1;
+            else code_tmp = (code_tmp << 1) + 1;
             uc = uc << 1;
         }
         //译码

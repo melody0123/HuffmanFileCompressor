@@ -59,7 +59,7 @@ public:
     HuffmanTree(char_type ch[], weight_type w[], int n); //由字符序列，对应的权重，字符种类数，字符->编码函数指针构造哈夫曼树
     virtual ~HuffmanTree(); //析构函数
     string encode(char_type ch); //求一个字符的编码
-    void decode(string code, char_type res[], int *cur_pos); //把一串编码转换成字符序列，链表的每一个节点是一个字符
+    void decode(unsigned char code, char_type res[], int *cur_pos); //把一串编码转换成字符序列，链表的每一个节点是一个字符
 
 private:
     HuffNode<char_type, weight_type> *root; //树的根节点指针
@@ -182,15 +182,22 @@ string HuffmanTree<char_type, weight_type>::encode(char_type ch)
 }
 
 template<class char_type, class weight_type>
-void HuffmanTree<char_type, weight_type>::decode(string code, char_type res[], int *cur_pos)
+void HuffmanTree<char_type, weight_type>::decode(unsigned char code, char_type res[], int *cur_pos)
 {
-    for(int i = 0; i < code.length(); i++)
+    for(int i = 0; i < 8; i++)
     {
         //逐个处理每位编码
-        if(code[i] == '0') //往左走
-           cur_ptr = cur_ptr->get_left();
-       else //往右走
-           cur_ptr = cur_ptr->get_right();
+        if (code < 128) //往左走
+        {
+            cur_ptr = cur_ptr->get_left();
+            code = code << 1;
+        }
+           
+        else //往右走
+        {
+            cur_ptr = cur_ptr->get_right();
+            code = code << 1;
+        }
 
        if(cur_ptr->is_leaf())
        {
