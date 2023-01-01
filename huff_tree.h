@@ -60,7 +60,7 @@ public:
     HuffmanTree(char_type ch[], weight_type w[], int n); //由字符序列，对应的权重，字符种类数，字符->编码函数指针构造哈夫曼树
     virtual ~HuffmanTree(); //析构函数
     string encode(char_type ch); //求一个字符的编码
-    LinkList<char_type>* decode(string code, int size); //把一串编码转换成字符序列，链表的每一个节点是一个字符
+    LinkList<char_type> decode(string code, int size); //把一串编码转换成字符序列，链表的每一个节点是一个字符
 
 private:
     HuffNode<char_type, weight_type> *root; //树的根节点指针
@@ -123,7 +123,7 @@ HuffmanTree<char_type, weight_type>::HuffmanTree(char_type ch[], weight_type w[]
     //code_arr = new string[num];
 
     priority_queue<HuffTreeAssist<char_type, weight_type>, vector<HuffTreeAssist<char_type, weight_type> >, greater<HuffTreeAssist<char_type, weight_type> > > min_heap; //这个小根堆里用于存储二叉树，用于构造哈夫曼树
-    int cnt = 0;
+
     for(int i = 0; i < num; i++) //一开始，所有叶子节点都是一棵树，然后插进 min_heap 里
     {
         HuffTreeAssist<char_type, weight_type> tmp;
@@ -132,14 +132,10 @@ HuffmanTree<char_type, weight_type>::HuffmanTree(char_type ch[], weight_type w[]
             printf("内存分配出错！\n");
             exit(1);
         }
-        if (w[i])
-        {
-            min_heap.push(tmp);
-            cnt++;
-        }
+        min_heap.push(tmp);
     }
 
-    for(int i = 0; i < cnt - 1; i++) //建立哈夫曼树
+    for(int i = 0; i < num - 1; i++) //建立哈夫曼树
     {
         HuffTreeAssist<char_type, weight_type> t, t1, t2; //临时变量
         t1 = min_heap.top();
@@ -183,9 +179,9 @@ string HuffmanTree<char_type, weight_type>::encode(char_type ch)
 }
 
 template<class char_type, class weight_type>
-LinkList<char_type>* HuffmanTree<char_type, weight_type>::decode(string code, int size)
+LinkList<char_type> HuffmanTree<char_type, weight_type>::decode(string code, int size)
 {
-    LinkList<char_type> *original_char = new LinkList<char_type>; //存储翻译后的字符序列
+    LinkList<char_type> original_char; //存储翻译后的字符序列
     //char_type ch;
     int cnt = 0;
     for(int i = 0; i < code.length(); i++)
@@ -199,7 +195,7 @@ LinkList<char_type>* HuffmanTree<char_type, weight_type>::decode(string code, in
        if(cur_ptr->is_leaf())
        {
            //当前节点为叶节点
-           original_char->push_back(((HuffLeafNode<char_type, weight_type> *)cur_ptr)->get_char()); //把当前字符存入链表
+           original_char.push_back(((HuffLeafNode<char_type, weight_type> *)cur_ptr)->get_char()); //把当前字符存入链表
            //ch = (HuffLeafNode *)cur_ptr->get_char();
            cnt++;
            cur_ptr = root;

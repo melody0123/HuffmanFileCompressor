@@ -1,6 +1,6 @@
 #ifndef COMPRESSION_H_INCLUDED
 #define COMPRESSION_H_INCLUDED
-#define _CRT_SECURE_NO_WARNINGS
+
 #include "huff_tree.h"
 
 
@@ -186,13 +186,13 @@ void HuffCompression::decompress()
         {
             if(uc < 128) tmp = tmp + "0";
             else tmp = tmp + "1";
-            uc = uc << 1;
+            uc << 1;
         }
         c = fgetc(infp);
     }
 
-    LinkList<unsigned char> *origin_file = p_tree->decode(tmp, size); //译码
-    for(node<unsigned char> *cur_ptr = (origin_file->get_head())->next; cur_ptr != nullptr; cur_ptr = cur_ptr->next)
+    LinkList<unsigned char> origin_file = p_tree->decode(tmp, size); //译码
+    for(node<unsigned char> *cur_ptr = (origin_file.get_head())->next; cur_ptr != nullptr; cur_ptr = cur_ptr->next)
     {
         fputc(cur_ptr->data, outfp);
     }
